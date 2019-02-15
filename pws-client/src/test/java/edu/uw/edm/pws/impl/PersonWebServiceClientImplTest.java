@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.uw.edm.pws.exception.BadSearchRequestException;
+import edu.uw.edm.pws.exception.BadSearchPersonRequestException;
 import edu.uw.edm.pws.exception.NoSuchPersonException;
 import edu.uw.edm.pws.exception.PWSException;
 import edu.uw.edm.pws.model.Person;
@@ -85,7 +85,7 @@ public class PersonWebServiceClientImplTest {
 
     }
 
-    @Test(expected = BadSearchRequestException.class)
+    @Test(expected = BadSearchPersonRequestException.class)
     public void badSearchRequestExceptionTest() throws PWSException {
         this.server.expect(requestTo(startsWith("http://gws.com/identity/v2/person")))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST));
