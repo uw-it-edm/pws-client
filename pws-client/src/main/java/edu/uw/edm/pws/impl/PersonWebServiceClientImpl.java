@@ -58,7 +58,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
         final MultiValueMap<String, String> searchParams = searchModelToQueryParams(personSearchModel);
 
-        final UriComponents uri = UriComponentsBuilder.fromHttpUrl(pwsURL + PWS_GET_PERSON_FULL_V2_URI)
+        final UriComponents uri = UriComponentsBuilder.fromHttpUrl(pwsURL + PWS_SEARCH_PERSON_V2_URI)
                 .queryParams(searchParams).build();
 
         final ResponseEntity<PersonSearchResult> pwsResponse;
