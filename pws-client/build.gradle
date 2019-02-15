@@ -1,0 +1,13 @@
+jar {
+    baseName = project.name
+}
+
+dependencies {
+
+    compileOnly("org.springframework:spring-web")
+    compileOnly("org.projectlombok:lombok")
+
+    testCompile("org.springframework:spring-web")
+    testCompile("org.projectlombok:lombok")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
