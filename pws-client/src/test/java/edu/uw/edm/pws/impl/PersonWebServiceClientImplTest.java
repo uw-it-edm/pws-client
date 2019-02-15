@@ -1,14 +1,21 @@
 package edu.uw.edm.pws.impl;
 
-import org.hamcrest.core.SubstringMatcher;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import edu.uw.edm.pws.exception.BadSearchRequestException;
 import edu.uw.edm.pws.exception.NoSuchPersonException;
@@ -40,6 +47,11 @@ public class PersonWebServiceClientImplTest {
     @Before
     public void setUp() {
         RestTemplate restTemplate = new RestTemplate();
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
+        converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
+        messageConverters.add(converter);
+        restTemplate.setMessageConverters(messageConverters);
         server = MockRestServiceServer.bindTo(restTemplate).build();
 
         pws = new PersonWebServiceClientImpl(restTemplate, "http://gws.com/");

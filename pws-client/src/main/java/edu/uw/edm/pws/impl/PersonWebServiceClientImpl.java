@@ -1,11 +1,15 @@
 
 package edu.uw.edm.pws.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -15,6 +19,8 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import edu.uw.edm.pws.PersonWebServiceClient;
 import edu.uw.edm.pws.exception.BadSearchRequestException;
@@ -40,6 +46,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     public PersonWebServiceClientImpl(RestTemplate restTemplate, String pwsURL) {
         this.restTemplate = restTemplate;
+
         this.pwsURL = pwsURL;
 
         ArrayList<MediaType> headers = new ArrayList<>();

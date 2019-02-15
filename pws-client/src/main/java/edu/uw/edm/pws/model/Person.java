@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public  class Person {
+public class Person {
 
     @JsonProperty("DisplayName")
     protected String displayName;
