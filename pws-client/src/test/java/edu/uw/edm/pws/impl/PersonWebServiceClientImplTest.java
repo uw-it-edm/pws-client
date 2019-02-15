@@ -1,6 +1,11 @@
 package edu.uw.edm.pws.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +29,7 @@ import edu.uw.edm.pws.model.Person;
 import edu.uw.edm.pws.model.search.PersonSearchModel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -69,6 +75,24 @@ public class PersonWebServiceClientImplTest {
     public void noSuchPersonPersonExceptionTest() throws PWSException {
         this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full")).andRespond(withStatus(HttpStatus.NOT_FOUND));
         pws.getPersonByRegId("my-reg-id");
+
+    }
+
+
+    @Test
+    public void fieldsArentDuplicatedTest() throws PWSException, JsonProcessingException {
+        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full")).andRespond(withSuccess(TEST_RESPONSE_GET, MediaType.APPLICATION_JSON));
+        final Person personByRegId = pws.getPersonByRegId("my-reg-id");
+
+        final String json = new ObjectMapper().writeValueAsString(personByRegId);
+        Configuration jsonPathConf = Configuration
+                .defaultConfiguration()
+                .addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
+
+        final DocumentContext parse = JsonPath.using(jsonPathConf).parse(json);
+        assertThat(parse.read("$.uwnetID"), nullValue());
+        assertThat(parse.read("$.UWNetID"), is(equalTo("bsimps")));
+
 
     }
 
@@ -225,7 +249,7 @@ public class PersonWebServiceClientImplTest {
             "    \"RegisteredSurname\": \"SIMPSON\",\n" +
             "    \"RepositoryTimeStamp\": \"1/3/2017 9:29:12 AM\",\n" +
             "    \"UIDNumber\": null,\n" +
-            "    \"UWNetID\": null,\n" +
+            "    \"UWNetID\": \"bsimps\",\n" +
             "    \"UWRegID\": \"ADA12DA10F7649B2A8861B14633F0A0A\",\n" +
             "    \"WhitepagesPublish\": false,\n" +
             "    \"PersonAffiliations\": {\n" +
