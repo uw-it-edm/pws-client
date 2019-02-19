@@ -1,6 +1,8 @@
 
 package edu.uw.edm.pws.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,17 +11,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import edu.uw.edm.pws.PersonWebServiceClient;
-import edu.uw.edm.pws.exception.BadSearchPersonRequestException;
+import edu.uw.edm.pws.exception.BadPersonRequestException;
 import edu.uw.edm.pws.exception.NoSuchPersonException;
+import edu.uw.edm.pws.exception.PWSAuthenticationException;
 import edu.uw.edm.pws.exception.PWSException;
+import edu.uw.edm.pws.exception.UnknownPersonRequestException;
+import edu.uw.edm.pws.model.PWSError;
 import edu.uw.edm.pws.model.Person;
 import edu.uw.edm.pws.model.search.PersonSearchModel;
 import edu.uw.edm.pws.model.search.PersonSearchResult;
@@ -31,12 +37,13 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
 
     private final RestTemplate restTemplate;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private HttpHeaders headers;
 
     private final String pwsURL;
-    private static String PWS_GET_PERSON_FULL_V2_URI = "/identity/v2/person/%s/full";
-    private static String PWS_SEARCH_PERSON_V2_URI = "/identity/v2/person";
+    private static String PWS_GET_PERSON_FULL_V2_URI = "/identity/v2/person/%s/full.json";
+    private static String PWS_SEARCH_PERSON_V2_URI = "/identity/v2/person.json";
 
     public PersonWebServiceClientImpl(RestTemplate restTemplate, String pwsURL) {
         this.restTemplate = restTemplate;
@@ -66,13 +73,9 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
             pwsResponse = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, request, PersonSearchResult.class, searchParams);
             return pwsResponse.getBody();
 
-        } catch (HttpClientErrorException e) {
-            switch (e.getStatusCode()) {
-                case BAD_REQUEST:
-                    throw new BadSearchPersonRequestException(e.getResponseBodyAsString());
-                default:
-                    throw new PWSException(e.getStatusCode());
-            }
+        } catch (HttpStatusCodeException e) {
+            throwSearchPWSError(e);
+            return null;
         } catch (Exception e) {
             throw new PWSException(e);
         }
@@ -92,17 +95,53 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
             pwsResponse = restTemplate.exchange(url, HttpMethod.GET, request, Person.class);
             return pwsResponse.getBody();
 
-        } catch (HttpClientErrorException e) {
-            switch (e.getStatusCode()) {
-                case NOT_FOUND:
-                    throw new NoSuchPersonException(regId);
-                default:
-                    throw new PWSException(e.getStatusCode());
-            }
+        } catch (HttpStatusCodeException e) {
+            throwGetPWSError(regId, e);
+            return null;
         } catch (Exception e) {
             throw new PWSException(e);
         }
 
+    }
+
+    private void throwSearchPWSError(HttpStatusCodeException e) throws PWSException {
+        PWSError pwsError = parsePWSError(e);
+        switch (e.getStatusCode()) {
+            case BAD_REQUEST:
+                throw new BadPersonRequestException(pwsError);
+            case UNAUTHORIZED:
+                throw new PWSAuthenticationException(pwsError);
+            default:
+                throw new PWSException(pwsError);
+        }
+    }
+
+
+    private void throwGetPWSError(String regId, HttpStatusCodeException e) throws PWSException {
+        PWSError pwsError = parsePWSError(e);
+        switch (e.getStatusCode()) {
+            case NOT_FOUND:
+                throw new NoSuchPersonException(pwsError, regId);
+            case BAD_REQUEST:
+                throw new BadPersonRequestException(pwsError);
+            case UNAUTHORIZED:
+                throw new PWSAuthenticationException(pwsError);
+            default:
+                throw new PWSException(pwsError);
+        }
+    }
+
+
+    private PWSError parsePWSError(HttpStatusCodeException e) throws UnknownPersonRequestException {
+        final String responseBodyAsString = e.getResponseBodyAsString();
+        PWSError pwsError;
+        try {
+            pwsError = objectMapper.readValue(responseBodyAsString, PWSError.class);
+        } catch (IOException e1) {
+            log.error("Couldn't parse pwsError ", e);
+            throw new UnknownPersonRequestException(e.getRawStatusCode() + " - " + responseBodyAsString, e);
+        }
+        return pwsError;
     }
 
     private String getGetUrl(String id) {

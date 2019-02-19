@@ -1,26 +1,39 @@
 package edu.uw.edm.pws.exception;
 
-import org.springframework.http.HttpStatus;
+import edu.uw.edm.pws.model.PWSError;
+import lombok.Getter;
 
 /**
  * @author Maxime Deravet Date: 2019-02-14
  */
 public class PWSException extends Throwable {
-    public PWSException(HttpStatus statusCode) {
-        super("Received error " + statusCode.value() + " - " + statusCode.getReasonPhrase() + " when calling PWS");
+    @Getter
+    private final PWSError pwsError;
 
+
+    public PWSException(PWSError pwsError) {
+        super(pwsError == null ? "Unknown exception" : pwsError.getStatusCode() + " - " + pwsError.getStatusDescription());
+        this.pwsError = pwsError;
     }
 
-    public PWSException(String error) {
-        super(error);
 
+    public PWSException(PWSError pwsError, String message) {
+        super(message);
+        this.pwsError = pwsError;
+    }
+
+    public PWSException(String message) {
+        super(message);
+        this.pwsError = new PWSError();
     }
 
     public PWSException(String message, Throwable cause) {
         super(message, cause);
+        this.pwsError = new PWSError();
     }
 
     public PWSException(Throwable cause) {
         super(cause);
+        this.pwsError = new PWSError();
     }
 }

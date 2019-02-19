@@ -16,12 +16,14 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.uw.edm.pws.exception.BadPersonRequestException;
 import edu.uw.edm.pws.exception.BadSearchPersonRequestException;
 import edu.uw.edm.pws.exception.NoSuchPersonException;
 import edu.uw.edm.pws.exception.PWSException;
@@ -29,12 +31,14 @@ import edu.uw.edm.pws.model.Person;
 import edu.uw.edm.pws.model.search.PersonSearchModel;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -66,22 +70,46 @@ public class PersonWebServiceClientImplTest {
 
     @Test(expected = PWSException.class)
     public void getPersonExceptionTest() throws PWSException {
-        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full")).andRespond(withStatus(HttpStatus.BAD_REQUEST));
-        pws.getPersonByRegId("my-reg-id");
+        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full.json"))
+                .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE).body("{\n" +
+                        "    \"InnerExceptions\": null,\n" +
+                        "    \"StackTrace\": null,\n" +
+                        "    \"StatusCode\": \"503\",\n" +
+                        "    \"StatusDescription\": \"'bla'\"\n" +
+                        "}").contentType(MediaType.APPLICATION_JSON));
+        try {
+            pws.getPersonByRegId("my-reg-id");
+        } catch (PWSException e) {
+            assertThat(e, is(instanceOf(PWSException.class)));
+            assertThat(e.getPwsError().getStatusCode(), is(equalTo("503")));
+            throw e;
+        }
 
     }
 
     @Test(expected = NoSuchPersonException.class)
     public void noSuchPersonPersonExceptionTest() throws PWSException {
-        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full")).andRespond(withStatus(HttpStatus.NOT_FOUND));
-        pws.getPersonByRegId("my-reg-id");
+        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full.json"))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND).body("{\n" +
+                        "    \"InnerExceptions\": null,\n" +
+                        "    \"StackTrace\": null,\n" +
+                        "    \"StatusCode\": \"404\",\n" +
+                        "    \"StatusDescription\": \"No person found.\"\n" +
+                        "}").contentType(MediaType.APPLICATION_JSON));
+        try {
+            pws.getPersonByRegId("my-reg-id");
+        } catch (PWSException e) {
+            assertThat(e, is(instanceOf(NoSuchPersonException.class)));
+            assertThat(e.getPwsError().getStatusCode(), is(equalTo("404")));
+            throw e;
+        }
 
     }
 
 
     @Test
     public void fieldsArentDuplicatedTest() throws PWSException, JsonProcessingException {
-        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full")).andRespond(withSuccess(TEST_RESPONSE_GET, MediaType.APPLICATION_JSON));
+        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full.json")).andRespond(withSuccess(TEST_RESPONSE_GET, MediaType.APPLICATION_JSON));
         final Person personByRegId = pws.getPersonByRegId("my-reg-id");
 
         final String json = new ObjectMapper().writeValueAsString(personByRegId);
@@ -99,7 +127,7 @@ public class PersonWebServiceClientImplTest {
 
     @Test
     public void getPersonTest() throws PWSException {
-        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full")).andRespond(withSuccess(TEST_RESPONSE_GET, MediaType.APPLICATION_JSON));
+        this.server.expect(requestTo("http://gws.com/identity/v2/person/my-reg-id/full.json")).andRespond(withSuccess(TEST_RESPONSE_GET, MediaType.APPLICATION_JSON));
         final Person personByRegId = pws.getPersonByRegId("my-reg-id");
 
         assertThat(personByRegId.getDisplayName(), is(equalTo("BART SIMPSON")));
@@ -109,11 +137,24 @@ public class PersonWebServiceClientImplTest {
 
     }
 
-    @Test(expected = BadSearchPersonRequestException.class)
+    @Test(expected = BadPersonRequestException.class)
     public void badSearchRequestExceptionTest() throws PWSException {
         this.server.expect(requestTo(startsWith("http://gws.com/identity/v2/person")))
-                .andRespond(withStatus(HttpStatus.BAD_REQUEST));
-        pws.searchPerson(PersonSearchModel.builder().build());
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST).body("{\n" +
+                        "    \"InnerExceptions\": null,\n" +
+                        "    \"StackTrace\": null,\n" +
+                        "    \"StatusCode\": \"400\",\n" +
+                        "    \"StatusDescription\": \"Invalid studentNumber\"\n" +
+                        "}").contentType(MediaType.APPLICATION_JSON));
+
+        try {
+            pws.getPersonByRegId("my-reg-id");
+        } catch (PWSException e) {
+            assertThat(e, is(instanceOf(BadPersonRequestException.class)));
+            assertThat(e.getPwsError().getStatusCode(), is(equalTo("400")));
+            assertThat(e.getPwsError().getStatusDescription(), is(equalTo("Invalid studentNumber")));
+            throw e;
+        }
 
     }
 
