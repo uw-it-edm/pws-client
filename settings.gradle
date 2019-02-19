@@ -1,0 +1,6 @@
+rootProject.name = 'pws-client-root'
+
+include 'pws-client'
+project(":pws-client").name = "pws-client"
+include 'pws-client-spring-boot-starter'
+project(":pws-client-spring-boot-starter").name = "pws-client-spring-boot-starter"

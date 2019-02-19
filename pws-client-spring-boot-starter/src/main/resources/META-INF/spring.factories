@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+edu.uw.edm.pws.autoconfigure.PWSAutoConfiguration
