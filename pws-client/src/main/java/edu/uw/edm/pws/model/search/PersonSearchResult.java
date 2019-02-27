@@ -26,6 +26,4 @@ public class PersonSearchResult {
     @JsonProperty("TotalCount")
     private int totalCount;
 
-    @JsonProperty("Next")
-    private String next;
 }
