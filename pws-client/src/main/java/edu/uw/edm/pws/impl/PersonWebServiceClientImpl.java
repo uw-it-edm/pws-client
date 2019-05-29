@@ -186,8 +186,8 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
             searchParams.add("edupersonaffiliation_employee", "true");
         }
 
-        if (personSearchModel.getEmployeeFilter() != null) {
-            searchParams.add("employeeIsActive", personSearchModel.getEmployeeFilter().getEmployeeIsActiveValue());
+        if (personSearchModel.getEmployeeAffiliationStateFilter() != null) {
+            searchParams.add("employeeAffiliationState", personSearchModel.getEmployeeAffiliationStateFilter().getEmployeeAffiliationStateValue());
         }
 
         if (personSearchModel.isEduPersonAffiliationFaculty()) {

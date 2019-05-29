@@ -20,7 +20,7 @@ public class PersonSearchModel {
     private boolean eduPersonAffiliationMember;
     private boolean eduPersonAffiliationStaff;
     private boolean eduPersonAffiliationStudent;
-    private EmployeeFilter employeeFilter;
+    private EmployeeAffiliationStateFilter employeeAffiliationStateFilter;
     private boolean includeOnlyActiveEmployee;
     private String email;
     private String employeeID;
