@@ -5,9 +5,9 @@ buildscript {
     }
     repositories {
         jcenter()
-        maven { url 'http://repo.spring.io/milestone' }
-        maven { url 'http://repo.spring.io/plugins-release' }
-        maven { url 'http://dl.bintray.com/maximede/gradle-plugins' }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://dl.bintray.com/maximede/gradle-plugins' }
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
@@ -50,7 +50,7 @@ allprojects {
 
     repositories {
         jcenter()
-        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/milestone" }
     }
 
     dependencyManagement {
@@ -62,7 +62,7 @@ allprojects {
     dependencies {
 
         compileOnly("org.springframework.boot:spring-boot-starter-web")
-        compileOnly("org.projectlombok:lombok")
+        compileOnly("org.projectlombok:lombok:1.18.12")
 
         testCompile("org.springframework.boot:spring-boot-starter-test")
     }
@@ -86,7 +86,7 @@ allprojects {
 
                     asNode().appendNode('repositories').appendNode('repository')
                             .appendNode('id', 'spring-releases').parent()
-                            .appendNode('url', 'http://repo.spring.io/libs-release')
+                            .appendNode('url', 'https://repo.spring.io/libs-release')
                 }
             }
         }
