@@ -26,6 +26,9 @@ public class EmployeePersonAffiliation {
     @JsonProperty("MailStop")
     private String mailStop;
 
+    @JsonProperty("EmployeeAffiliationState")
+    private String employeeAffiliationState;
+
     @JsonProperty("EmployeeWhitePages")
     private EmployeeWhitePages employeeWhitePages;
 }
