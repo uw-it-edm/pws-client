@@ -62,7 +62,7 @@ allprojects {
     dependencies {
 
         compileOnly("org.springframework.boot:spring-boot-starter-web")
-        compileOnly("org.projectlombok:lombok:1.18.12")
+        compileOnly("org.projectlombok:lombok:1.18.14")
 
         testCompile("org.springframework.boot:spring-boot-starter-test")
     }
