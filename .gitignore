@@ -38,6 +38,7 @@ transaction-logs
 .flattened-pom.xml
 secrets.yml
 out/
+.vscode/
 
 
 config/application-*.properties
