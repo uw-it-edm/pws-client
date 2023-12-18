@@ -6,7 +6,7 @@ buildscript {
     repositories {
         jcenter()
         maven { url 'https://repo.spring.io/milestone' }
-        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
         maven { url "https://raw.githubusercontent.com/uw-it-edm/edm-artifacts/master" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
