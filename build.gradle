@@ -6,7 +6,7 @@ buildscript {
     repositories {
         jcenter()
         maven { url 'https://repo.spring.io/milestone' }
-        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
         maven { url "https://raw.githubusercontent.com/uw-it-edm/edm-artifacts/master" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
@@ -16,7 +16,7 @@ buildscript {
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2"
         classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.8.1")
         classpath("nu.studer:gradle-credentials-plugin:1.0.4")
-        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
+        classpath 'io.spring.gradle:propdeps-plugin:0.0.8-SNAPSHOT'
     }
 }
 
@@ -68,6 +68,17 @@ allprojects {
     }
 
     publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/uw-it-edm/pws-client"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR") ?: System.getenv("USER")
+                    password = System.getenv("GITHUB_TOKEN") ?: System.getenv("GITHUB_PAT")
+                }
+            }
+        }
+
         publications {
             mavenJava(MavenPublication) {
                 from components.java
