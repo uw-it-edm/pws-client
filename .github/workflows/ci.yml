@@ -5,13 +5,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ARTIFACTORY_RELEASE_REPO: eaiw-release-local
-      ARTIFACTORY_RESOLVE_REPO: eaiw-local
-      ARTIFACTORY_SNAPSHOT_REPO: eaiw-snapshot-local
-      ARTIFACTORY_CONTEXT: ${{ secrets.ARTIFACTORY_CONTEXT }}
-      ARTIFACTORY_PUBLISH_USER: ${{ secrets.ARTIFACTORY_PUBLISH_USER }}
-      ARTIFACTORY_PUBLISH_PASSWORD: ${{ secrets.ARTIFACTORY_PUBLISH_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v2
@@ -29,10 +22,8 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build and test artifacts
         run: ./gradlew build
-      - name: Deploy artifacts
-        run: ./gradlew build artifactoryPublish
       - name: Publish package to github packages
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: publish
         env:
