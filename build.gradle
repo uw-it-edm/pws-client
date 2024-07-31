@@ -14,8 +14,7 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "edu.uw.concert:gradle-gitflow:0.3.1"
         classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2"
-        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.8.1")
-        classpath("nu.studer:gradle-credentials-plugin:1.0.4")
+        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.33.5")
         classpath 'io.spring.gradle:propdeps-plugin:0.0.8-SNAPSHOT'
     }
 }
@@ -32,8 +31,6 @@ allprojects {
     apply plugin: 'propdeps-idea'
     apply plugin: 'propdeps-eclipse'
 
-    apply plugin: 'nu.studer.credentials'
-    apply plugin: "com.jfrog.artifactory"
     apply plugin: 'maven-publish'
 
     sourceCompatibility = 1.8
@@ -65,6 +62,7 @@ allprojects {
         compileOnly("org.projectlombok:lombok:1.18.12")
 
         testCompile("org.springframework.boot:spring-boot-starter-test")
+        testCompile("org.projectlombok:lombok:1.18.12")
     }
 
     publishing {
@@ -101,58 +99,5 @@ allprojects {
                 }
             }
         }
-    }
-
-
-    artifactory {
-        contextUrl = System.getenv('ARTIFACTORY_CONTEXT')
-        //The base Artifactory URL if not overridden by the publisher/resolver
-
-
-        publish {
-            repository {
-                // The Artifactory repository key to publish to
-                def inferredRepoKey = System.getenv('ARTIFACTORY_SNAPSHOT_REPO')
-
-                if (!version.toString().contains("SNAPSHOT") && !version.toString().contains("dirty")) {
-                    inferredRepoKey = System.getenv('ARTIFACTORY_RELEASE_REPO')
-                }
-
-                repoKey = inferredRepoKey
-                logger.lifecycle "Using $inferredRepoKey as publishing repo"
-
-                // Username comes from ~/.gradle/gradle.properties
-                def resolveUserName = project.getProperties().get('eaiw.artifactoryPublishUser')
-                if (!resolveUserName?.trim()) {
-                    // try to get it from an environment variable
-                    resolveUserName = System.getenv("ARTIFACTORY_PUBLISH_USER")
-                }
-
-                username = resolveUserName
-
-                // Password comes from ~/.gradle/gradle.encrypted.properties
-                if (credentials?.propertyMissing(resolveUserName)) {
-                    password = credentials[resolveUserName]
-                } else {
-                    // try to get it from an environment variable
-                    password = System.getenv("ARTIFACTORY_PUBLISH_PASSWORD")
-                }
-            }
-
-            defaults {
-                publications('mavenJava')
-            }
-        }
-
-    }
-
-// make sure we have an artifact to publish
-    artifactoryPublish.dependsOn jar
-
-
-    if (version.toString().contains("dirty")) {
-        artifactoryPublish.skip = true // as documented
-        artifactoryPublish.onlyIf { false } // NOT documented
-
     }
 }
