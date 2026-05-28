@@ -1,16 +1,10 @@
 package edu.uw.edm.pws.autoconfigure;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,7 +21,6 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
@@ -56,31 +49,20 @@ public class PWSAutoConfiguration {
         return new PersonWebServiceClientImpl(restTemplate, pwsProperties.getUrl());
     }
 
-    private CloseableHttpClient httpClient(final PoolingHttpClientConnectionManager connectionManager) {
-
-        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom().setExpectContinueEnabled(true);
-
-        return HttpClients.custom().setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(requestConfigBuilder.build()).build();
-    }
-
-    private PoolingHttpClientConnectionManager connectionManager(final KeyManagerCabinet cabinet) throws KeyManagementException, NoSuchAlgorithmException {
+    private CloseableHttpClient httpClient(final KeyManagerCabinet cabinet) throws KeyManagementException, NoSuchAlgorithmException {
         TrustManager[] trustManagers = cabinet.getTrustManagers();
 
-
-        SSLContext context = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
+        SSLContext context = SSLContext.getInstance("TLS");
         context.init(cabinet.getKeyManagers(), trustManagers, new SecureRandom());
 
-        HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
+        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(context, new DefaultHostnameVerifier());
 
-        ConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(context, hostnameVerifier);
-
-        final Registry<ConnectionSocketFactory> sfr = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", socketFactory)
+        return HttpClients.custom()
+                .setConnectionManager(
+                        PoolingHttpClientConnectionManagerBuilder.create()
+                                .setSSLSocketFactory(sslSocketFactory)
+                                .build())
                 .build();
-
-        return new PoolingHttpClientConnectionManager(sfr);
     }
 
     @Bean
@@ -94,9 +76,7 @@ public class PWSAutoConfiguration {
     @Qualifier("pws-client")
     public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory(@Qualifier("pws-client") KeyManagerCabinet keyManagerCabinet) throws NoSuchAlgorithmException, KeyManagementException {
 
-        final PoolingHttpClientConnectionManager connectionManager = connectionManager(keyManagerCabinet);
-
-        final HttpClient httpClient = httpClient(connectionManager);
+        final CloseableHttpClient httpClient = httpClient(keyManagerCabinet);
         return new HttpComponentsClientHttpRequestFactory(httpClient);
     }
 

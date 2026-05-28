@@ -97,7 +97,7 @@ public class KeyManagerCabinet {
             if (keystoreType == null)
                 keystoreType = "JKS";
 
-            if (StringUtils.isEmpty(this.keystoreLocation))
+            if (!StringUtils.hasLength(this.keystoreLocation))
                 return new KeyManagerCabinet(null, null, null);
 
             KeyStore ks = KeyStore.getInstance(keystoreType);
