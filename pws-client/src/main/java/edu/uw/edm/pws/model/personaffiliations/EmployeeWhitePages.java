@@ -12,36 +12,36 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(
-    fieldVisibility = JsonAutoDetect.Visibility.ANY,
-    getterVisibility = JsonAutoDetect.Visibility.NONE,
-    setterVisibility = JsonAutoDetect.Visibility.NONE,
-    isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+        fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class EmployeeWhitePages {
 
-  @JsonProperty("Addresses")
-  private List<String> addresses;
+    @JsonProperty("Addresses")
+    private List<String> addresses;
 
-  @JsonProperty("EmailAddresses")
-  private List<String> emailAddresses;
+    @JsonProperty("EmailAddresses")
+    private List<String> emailAddresses;
 
-  @JsonProperty("Faxes")
-  private List<String> faxes;
+    @JsonProperty("Faxes")
+    private List<String> faxes;
 
-  @JsonProperty("Name")
-  private String name;
+    @JsonProperty("Name")
+    private String name;
 
-  @JsonProperty("Phones")
-  private List<String> phones;
+    @JsonProperty("Phones")
+    private List<String> phones;
 
-  @JsonProperty("Positions")
-  private List<EmployeePosition> positions;
+    @JsonProperty("Positions")
+    private List<EmployeePosition> positions;
 
-  @JsonProperty("PublishInDirectory")
-  private Boolean publishInDirectory;
+    @JsonProperty("PublishInDirectory")
+    private Boolean publishInDirectory;
 
-  @JsonProperty("TouchDials")
-  private List<String> touchDials;
+    @JsonProperty("TouchDials")
+    private List<String> touchDials;
 
-  @JsonProperty("VoiceMails")
-  private List<String> voiceMails;
+    @JsonProperty("VoiceMails")
+    private List<String> voiceMails;
 }

@@ -11,17 +11,17 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(
-    fieldVisibility = JsonAutoDetect.Visibility.ANY,
-    getterVisibility = JsonAutoDetect.Visibility.NONE,
-    setterVisibility = JsonAutoDetect.Visibility.NONE,
-    isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+        fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class EmployeePosition {
-  @JsonProperty("EWPDept")
-  private String eWPDept;
+    @JsonProperty("EWPDept")
+    private String eWPDept;
 
-  @JsonProperty("EWPTitle")
-  private String eWPTitle;
+    @JsonProperty("EWPTitle")
+    private String eWPTitle;
 
-  @JsonProperty("Primary")
-  private Boolean primary;
+    @JsonProperty("Primary")
+    private Boolean primary;
 }

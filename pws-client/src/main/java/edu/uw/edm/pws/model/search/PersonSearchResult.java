@@ -12,15 +12,15 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PersonSearchResult {
-  @JsonProperty("Persons")
-  private List<Person> persons;
+    @JsonProperty("Persons")
+    private List<Person> persons;
 
-  @JsonProperty("PageSize")
-  private int pageSize;
+    @JsonProperty("PageSize")
+    private int pageSize;
 
-  @JsonProperty("PageStart")
-  private int pageStart;
+    @JsonProperty("PageStart")
+    private int pageStart;
 
-  @JsonProperty("TotalCount")
-  private int totalCount;
+    @JsonProperty("TotalCount")
+    private int totalCount;
 }

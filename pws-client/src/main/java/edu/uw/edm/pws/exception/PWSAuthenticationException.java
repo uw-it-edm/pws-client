@@ -7,7 +7,7 @@ import edu.uw.edm.pws.model.PWSError;
  */
 public class PWSAuthenticationException extends PWSException {
 
-  public PWSAuthenticationException(PWSError pwsError) {
-    super(pwsError);
-  }
+    public PWSAuthenticationException(PWSError pwsError) {
+        super(pwsError);
+    }
 }

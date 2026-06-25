@@ -30,69 +30,69 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 @ConditionalOnClass(
-    value = {
-      PersonWebServiceClient.class,
-      RestTemplateBuilder.class,
-    })
+        value = {
+            PersonWebServiceClient.class,
+            RestTemplateBuilder.class,
+        })
 @AutoConfigureAfter(RestTemplateAutoConfiguration.class)
 @EnableConfigurationProperties(PWSProperties.class)
 public class PWSAutoConfiguration {
-  private final PWSProperties pwsProperties;
+    private final PWSProperties pwsProperties;
 
-  public PWSAutoConfiguration(PWSProperties pwsProperties) {
-    this.pwsProperties = pwsProperties;
-  }
+    public PWSAutoConfiguration(PWSProperties pwsProperties) {
+        this.pwsProperties = pwsProperties;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public PersonWebServiceClient personWebServiceClient(
-      @Qualifier("pws-client") RestTemplate restTemplate) {
+    @Bean
+    @ConditionalOnMissingBean
+    public PersonWebServiceClient personWebServiceClient(
+            @Qualifier("pws-client") RestTemplate restTemplate) {
 
-    return new PersonWebServiceClientImpl(restTemplate, pwsProperties.getUrl());
-  }
+        return new PersonWebServiceClientImpl(restTemplate, pwsProperties.getUrl());
+    }
 
-  private CloseableHttpClient httpClient(final KeyManagerCabinet cabinet)
-      throws KeyManagementException, NoSuchAlgorithmException {
-    TrustManager[] trustManagers = cabinet.getTrustManagers();
+    private CloseableHttpClient httpClient(final KeyManagerCabinet cabinet)
+            throws KeyManagementException, NoSuchAlgorithmException {
+        TrustManager[] trustManagers = cabinet.getTrustManagers();
 
-    SSLContext context = SSLContext.getInstance("TLS");
-    context.init(cabinet.getKeyManagers(), trustManagers, new SecureRandom());
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(cabinet.getKeyManagers(), trustManagers, new SecureRandom());
 
-    SSLConnectionSocketFactory sslSocketFactory =
-        new SSLConnectionSocketFactory(context, new DefaultHostnameVerifier());
+        SSLConnectionSocketFactory sslSocketFactory =
+                new SSLConnectionSocketFactory(context, new DefaultHostnameVerifier());
 
-    return HttpClients.custom()
-        .setConnectionManager(
-            PoolingHttpClientConnectionManagerBuilder.create()
-                .setSSLSocketFactory(sslSocketFactory)
-                .build())
-        .build();
-  }
+        return HttpClients.custom()
+                .setConnectionManager(
+                        PoolingHttpClientConnectionManagerBuilder.create()
+                                .setSSLSocketFactory(sslSocketFactory)
+                                .build())
+                .build();
+    }
 
-  @Bean
-  @Qualifier("pws-client")
-  public KeyManagerCabinet keyManagerCabinet(PWSProperties PWSProperties) throws Exception {
-    return new KeyManagerCabinet.Builder(
-            PWSProperties.getKeystoreLocation(), PWSProperties.getKeystorePassword())
-        .build();
-  }
+    @Bean
+    @Qualifier("pws-client")
+    public KeyManagerCabinet keyManagerCabinet(PWSProperties PWSProperties) throws Exception {
+        return new KeyManagerCabinet.Builder(
+                        PWSProperties.getKeystoreLocation(), PWSProperties.getKeystorePassword())
+                .build();
+    }
 
-  @Bean
-  @Qualifier("pws-client")
-  public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory(
-      @Qualifier("pws-client") KeyManagerCabinet keyManagerCabinet)
-      throws NoSuchAlgorithmException, KeyManagementException {
+    @Bean
+    @Qualifier("pws-client")
+    public HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory(
+            @Qualifier("pws-client") KeyManagerCabinet keyManagerCabinet)
+            throws NoSuchAlgorithmException, KeyManagementException {
 
-    final CloseableHttpClient httpClient = httpClient(keyManagerCabinet);
-    return new HttpComponentsClientHttpRequestFactory(httpClient);
-  }
+        final CloseableHttpClient httpClient = httpClient(keyManagerCabinet);
+        return new HttpComponentsClientHttpRequestFactory(httpClient);
+    }
 
-  @Bean
-  @Qualifier("pws-client")
-  public RestTemplate restTemplate(
-      RestTemplateBuilder restTemplateBuilder,
-      @Qualifier("pws-client")
-          HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
-    return restTemplateBuilder.requestFactory(() -> httpComponentsClientHttpRequestFactory).build();
-  }
+    @Bean
+    @Qualifier("pws-client")
+    public RestTemplate restTemplate(
+            RestTemplateBuilder restTemplateBuilder,
+            @Qualifier("pws-client")
+                    HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory) {
+        return restTemplateBuilder.requestFactory(() -> httpComponentsClientHttpRequestFactory).build();
+    }
 }

@@ -7,7 +7,7 @@ import edu.uw.edm.pws.model.PWSError;
  */
 public class BadPersonRequestException extends PWSException {
 
-  public BadPersonRequestException(PWSError pwsError) {
-    super(pwsError);
-  }
+    public BadPersonRequestException(PWSError pwsError) {
+        super(pwsError);
+    }
 }

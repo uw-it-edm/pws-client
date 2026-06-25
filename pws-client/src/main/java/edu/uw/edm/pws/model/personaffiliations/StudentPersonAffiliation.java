@@ -11,18 +11,18 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(
-    fieldVisibility = JsonAutoDetect.Visibility.ANY,
-    getterVisibility = JsonAutoDetect.Visibility.NONE,
-    setterVisibility = JsonAutoDetect.Visibility.NONE,
-    isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+        fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class StudentPersonAffiliation {
 
-  @JsonProperty("StudentNumber")
-  private String studentNumber;
+    @JsonProperty("StudentNumber")
+    private String studentNumber;
 
-  @JsonProperty("StudentSystemKey")
-  private String studentSystemKey;
+    @JsonProperty("StudentSystemKey")
+    private String studentSystemKey;
 
-  @JsonProperty("StudentWhitePages")
-  private StudentWhitePages studentWhitePages;
+    @JsonProperty("StudentWhitePages")
+    private StudentWhitePages studentWhitePages;
 }

@@ -11,9 +11,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class PWSProperties {
-  /** Group webservices URL */
-  private String url = "https://ws.admin.washington.edu/";
+    /** Group webservices URL */
+    private String url = "https://ws.admin.washington.edu/";
 
-  private String keystoreLocation;
-  private String keystorePassword;
+    private String keystoreLocation;
+    private String keystorePassword;
 }

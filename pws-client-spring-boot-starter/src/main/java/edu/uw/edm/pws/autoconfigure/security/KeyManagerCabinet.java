@@ -15,112 +15,112 @@ import org.springframework.util.StringUtils;
 
 public class KeyManagerCabinet {
 
-  private final KeyStore keystore;
-  private final KeyManager[] keyManagers;
-  private final TrustManager[] trustManagers;
+    private final KeyStore keystore;
+    private final KeyManager[] keyManagers;
+    private final TrustManager[] trustManagers;
 
-  /**
-   * Initializes instance variables for KeyStore, KeyManager array, and TrustManager array and
-   * constructs KeyManagerCabinet object.
-   */
-  private KeyManagerCabinet(
-      KeyStore keystore, KeyManager[] keyManagers, TrustManager[] trustManagers) {
-    this.keystore = keystore;
-    this.keyManagers = keyManagers;
-    this.trustManagers = trustManagers;
-  }
-
-  /**
-   * Returns KeyStore that was provided to the Builder constructor
-   *
-   * @return KeyStore
-   */
-  public KeyStore getKeystore() {
-    return keystore;
-  }
-
-  /**
-   * Returns KeyManager array that was created by the KeyManagerFactory in the Builder.build()
-   * method.
-   *
-   * @return KeyManager array
-   */
-  public KeyManager[] getKeyManagers() {
-    return keyManagers;
-  }
-
-  /**
-   * Returns TrustManager array that was created by the TrustManagerFactory in the Builder.build()
-   * method.
-   */
-  public TrustManager[] getTrustManagers() {
-    return trustManagers;
-  }
-
-  /** Fluent builder class, as per Joshua Bloch's Effective Java */
-  public static final class Builder {
-
-    private final String keystoreLocation;
-    private final String keystorePassword;
-    private String keystoreType;
-
-    public Builder(String keystoreLocation, String keystorePassword) {
-      this.keystoreLocation = keystoreLocation;
-      this.keystorePassword = keystorePassword;
-      this.keystoreType = "JKS";
+    /**
+     * Initializes instance variables for KeyStore, KeyManager array, and TrustManager array and
+     * constructs KeyManagerCabinet object.
+     */
+    private KeyManagerCabinet(
+            KeyStore keystore, KeyManager[] keyManagers, TrustManager[] trustManagers) {
+        this.keystore = keystore;
+        this.keyManagers = keyManagers;
+        this.trustManagers = trustManagers;
     }
 
     /**
-     * Sets KeyStore type and returns this Builder object.
+     * Returns KeyStore that was provided to the Builder constructor
      *
-     * @return This Builder object
+     * @return KeyStore
      */
-    public Builder keystoreType(String keystoreType) {
-      this.keystoreType = keystoreType;
-      return this;
+    public KeyStore getKeystore() {
+        return keystore;
     }
 
     /**
-     * If KeyStore file provided by {@link this.keystoreLocation} is empty, returns new
-     * KeyManagerCabinet which has no KeyStore, KeyManagers, or TrustManagers. If not, opens
-     * KeyStore (default KeyStore type is "JKS"), creates and initializes "SunX509"
-     * KeyManagerFactory, creates and initializes "SunX509" TrustManagerFactory, and uses them to
-     * create a KeyManagerCabinet. Returns this KeyManager cabinet.
+     * Returns KeyManager array that was created by the KeyManagerFactory in the Builder.build()
+     * method.
      *
-     * @return KeyManagerCabinet
+     * @return KeyManager array
      */
-    public KeyManagerCabinet build()
-        throws KeyStoreException,
-            NoSuchAlgorithmException,
-            CertificateException,
-            IOException,
-            UnrecoverableKeyException {
-      if (keystoreType == null) keystoreType = "JKS";
-
-      if (!StringUtils.hasLength(this.keystoreLocation))
-        return new KeyManagerCabinet(null, null, null);
-
-      KeyStore ks = KeyStore.getInstance(keystoreType);
-
-      FileInputStream fis = new FileInputStream(this.keystoreLocation);
-      char[] password =
-          this.keystorePassword != null
-              ? this.keystorePassword.toCharArray()
-              : "changeit".toCharArray();
-
-      try {
-        ks.load(fis, password);
-      } finally {
-        if (fis != null) fis.close();
-      }
-
-      KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-      kmf.init(ks, password);
-
-      TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-      tmf.init((KeyStore) null);
-
-      return new KeyManagerCabinet(ks, kmf.getKeyManagers(), tmf.getTrustManagers());
+    public KeyManager[] getKeyManagers() {
+        return keyManagers;
     }
-  }
+
+    /**
+     * Returns TrustManager array that was created by the TrustManagerFactory in the Builder.build()
+     * method.
+     */
+    public TrustManager[] getTrustManagers() {
+        return trustManagers;
+    }
+
+    /** Fluent builder class, as per Joshua Bloch's Effective Java */
+    public static final class Builder {
+
+        private final String keystoreLocation;
+        private final String keystorePassword;
+        private String keystoreType;
+
+        public Builder(String keystoreLocation, String keystorePassword) {
+            this.keystoreLocation = keystoreLocation;
+            this.keystorePassword = keystorePassword;
+            this.keystoreType = "JKS";
+        }
+
+        /**
+         * Sets KeyStore type and returns this Builder object.
+         *
+         * @return This Builder object
+         */
+        public Builder keystoreType(String keystoreType) {
+            this.keystoreType = keystoreType;
+            return this;
+        }
+
+        /**
+         * If KeyStore file provided by {@link this.keystoreLocation} is empty, returns new
+         * KeyManagerCabinet which has no KeyStore, KeyManagers, or TrustManagers. If not, opens
+         * KeyStore (default KeyStore type is "JKS"), creates and initializes "SunX509"
+         * KeyManagerFactory, creates and initializes "SunX509" TrustManagerFactory, and uses them to
+         * create a KeyManagerCabinet. Returns this KeyManager cabinet.
+         *
+         * @return KeyManagerCabinet
+         */
+        public KeyManagerCabinet build()
+                throws KeyStoreException,
+                        NoSuchAlgorithmException,
+                        CertificateException,
+                        IOException,
+                        UnrecoverableKeyException {
+            if (keystoreType == null) keystoreType = "JKS";
+
+            if (!StringUtils.hasLength(this.keystoreLocation))
+                return new KeyManagerCabinet(null, null, null);
+
+            KeyStore ks = KeyStore.getInstance(keystoreType);
+
+            FileInputStream fis = new FileInputStream(this.keystoreLocation);
+            char[] password =
+                    this.keystorePassword != null
+                            ? this.keystorePassword.toCharArray()
+                            : "changeit".toCharArray();
+
+            try {
+                ks.load(fis, password);
+            } finally {
+                if (fis != null) fis.close();
+            }
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ks, password);
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+            tmf.init((KeyStore) null);
+
+            return new KeyManagerCabinet(ks, kmf.getKeyManagers(), tmf.getTrustManagers());
+        }
+    }
 }

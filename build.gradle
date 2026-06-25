@@ -46,7 +46,12 @@ subprojects {
     spotless {
         java {
             target 'src/*/java/**/*.java'
-            googleJavaFormat('1.17.0')
+            // Style guide: https://google.github.io/styleguide/javaguide
+            // EDM team uses 4 spaces instead of the default 2 in the style guide.
+            googleJavaFormat('1.25.2')
+            leadingSpacesToTabs(2)
+            leadingTabsToSpaces(4)
+            removeUnusedImports()
             trimTrailingWhitespace()
             endWithNewline()
         }
