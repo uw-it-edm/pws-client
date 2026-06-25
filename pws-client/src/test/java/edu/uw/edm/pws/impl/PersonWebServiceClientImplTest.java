@@ -71,7 +71,8 @@ public class PersonWebServiceClientImplTest {
                                                 + "    \"StatusDescription\": \"'bla'\"\n"
                                                 + "}")
                                 .contentType(MediaType.APPLICATION_JSON));
-        assertThrows(PWSException.class, () -> pws.getPersonByRegId("my-reg-id"));
+        PWSException ex = assertThrows(PWSException.class, () -> pws.getPersonByRegId("my-reg-id"));
+        assertThat(ex.getPwsError().getStatusCode(), is(equalTo("503")));
     }
 
     @Test
