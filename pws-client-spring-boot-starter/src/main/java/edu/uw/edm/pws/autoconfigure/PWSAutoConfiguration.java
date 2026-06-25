@@ -28,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author Maxime Deravet Date: 10/24/17
  */
+@SuppressWarnings("deprecation")
 @Configuration
 @ConditionalOnClass(
         value = {

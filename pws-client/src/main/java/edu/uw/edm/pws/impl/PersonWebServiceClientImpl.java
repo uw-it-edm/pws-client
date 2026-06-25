@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
+@SuppressWarnings("deprecation")
 public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     private final RestTemplate restTemplate;
@@ -54,7 +55,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     public PersonSearchResult searchPerson(PersonSearchModel personSearchModel) throws PWSException {
 
-        HttpEntity request = new HttpEntity(headers);
+        HttpEntity<?> request = new HttpEntity<>(headers);
 
         final MultiValueMap<String, String> searchParams = searchModelToQueryParams(personSearchModel);
 
@@ -84,7 +85,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     private Person getPersonById(String regId) throws PWSException {
 
-        HttpEntity request = new HttpEntity(headers);
+        HttpEntity<?> request = new HttpEntity<>(headers);
         final String url = getGetUrl(regId);
         final ResponseEntity<Person> pwsResponse;
         try {
