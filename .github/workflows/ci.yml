@@ -1,4 +1,4 @@
-name: CI Build
+name: "pws-client: CI Build"
 
 on:
   push:
