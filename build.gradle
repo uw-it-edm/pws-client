@@ -1,7 +1,8 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.3' apply false
+    id 'org.springframework.boot' version '3.5.9' apply false
     id 'io.spring.dependency-management' version '1.1.7' apply false
+    id 'com.diffplug.spotless' version '7.2.1' apply false
     id 'maven-publish'
 }
 
@@ -11,21 +12,24 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/milestone" }
     }
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.diffplug.spotless'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
 
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.3"
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.9"
         }
     }
 
@@ -37,6 +41,20 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testCompileOnly("org.projectlombok:lombok")
         testAnnotationProcessor("org.projectlombok:lombok")
+    }
+
+    spotless {
+        java {
+            target 'src/*/java/**/*.java'
+            googleJavaFormat('1.17.0')
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+        format 'misc', {
+            target '*.gradle', '*.md', '.gitignore'
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
     }
 
     publishing {

@@ -7,7 +7,7 @@ import edu.uw.edm.pws.model.PWSError;
  */
 public class NoSuchPersonException extends PWSException {
 
-    public NoSuchPersonException(PWSError pwsError, String id) {
-        super(pwsError, "Person " + id + " doesn't exist");
-    }
+  public NoSuchPersonException(PWSError pwsError, String id) {
+    super(pwsError, "Person " + id + " doesn't exist");
+  }
 }

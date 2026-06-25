@@ -3,7 +3,6 @@ package edu.uw.edm.pws.model.personaffiliations;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
 /**
@@ -11,24 +10,25 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    getterVisibility = JsonAutoDetect.Visibility.NONE,
+    setterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class EmployeePersonAffiliation {
 
-    @JsonProperty("EmployeeID")
-    private String employeeId;
+  @JsonProperty("EmployeeID")
+  private String employeeId;
 
-    @JsonProperty("HomeDepartment")
-    private String homeDepartment;
+  @JsonProperty("HomeDepartment")
+  private String homeDepartment;
 
-    @JsonProperty("MailStop")
-    private String mailStop;
+  @JsonProperty("MailStop")
+  private String mailStop;
 
-    @JsonProperty("EmployeeAffiliationState")
-    private String employeeAffiliationState;
+  @JsonProperty("EmployeeAffiliationState")
+  private String employeeAffiliationState;
 
-    @JsonProperty("EmployeeWhitePages")
-    private EmployeeWhitePages employeeWhitePages;
+  @JsonProperty("EmployeeWhitePages")
+  private EmployeeWhitePages employeeWhitePages;
 }

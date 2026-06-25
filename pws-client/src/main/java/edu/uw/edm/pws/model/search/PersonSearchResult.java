@@ -2,10 +2,8 @@ package edu.uw.edm.pws.model.search;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
-
 import edu.uw.edm.pws.model.Person;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -14,16 +12,15 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PersonSearchResult {
-    @JsonProperty("Persons")
-    private List<Person> persons;
+  @JsonProperty("Persons")
+  private List<Person> persons;
 
-    @JsonProperty("PageSize")
-    private int pageSize;
+  @JsonProperty("PageSize")
+  private int pageSize;
 
-    @JsonProperty("PageStart")
-    private int pageStart;
+  @JsonProperty("PageStart")
+  private int pageStart;
 
-    @JsonProperty("TotalCount")
-    private int totalCount;
-
+  @JsonProperty("TotalCount")
+  private int totalCount;
 }

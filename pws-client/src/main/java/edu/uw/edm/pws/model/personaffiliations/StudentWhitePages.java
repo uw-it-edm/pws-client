@@ -3,9 +3,7 @@ package edu.uw.edm.pws.model.personaffiliations;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
-
 import lombok.Data;
 
 /**
@@ -13,31 +11,29 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+    fieldVisibility = JsonAutoDetect.Visibility.ANY,
+    getterVisibility = JsonAutoDetect.Visibility.NONE,
+    setterVisibility = JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class StudentWhitePages {
 
-    @JsonProperty("Class")
-    /**
-     * Class in PWS
-     */
-    private String classValue;
+  @JsonProperty("Class")
+  /** Class in PWS */
+  private String classValue;
 
-    @JsonProperty("Departments")
-    private List<String> departments;
+  @JsonProperty("Departments")
+  private List<String> departments;
 
-    @JsonProperty("Email")
-    private String email;
+  @JsonProperty("Email")
+  private String email;
 
-    @JsonProperty("Name")
-    private String name;
+  @JsonProperty("Name")
+  private String name;
 
-    @JsonProperty("Phone")
-    private String phone;
+  @JsonProperty("Phone")
+  private String phone;
 
-    @JsonProperty("PublishInDirectory")
-    private String publishInDirectory;
-
+  @JsonProperty("PublishInDirectory")
+  private String publishInDirectory;
 }
