@@ -33,43 +33,47 @@ Upgrade this project to a modern, supported baseline with **Java 21** and the **
 
 ## Recommended Implementation Order
 
-1. **Pre-flight and observability**
-   - Capture current dependency graph and deprecation warnings.
-   - Confirm available quality tasks (`test`, formatting, integration gates).
-   - Define upgrade acceptance matrix (unit, integration, startup).
+### ✅ COMPLETED
 
-2. **Build/tooling baseline**
-   - Keep Gradle wrapper in a version compatible with latest Spring Boot 3.x.
-   - Move Java baseline from 17 to 21 in Gradle config and build runtime.
-   - Ensure CI/build images and local docs reference Java 21.
+1. **Pre-flight and observability** — DONE
+   - Captured baseline build state, task inventory, and dependencies.
+   - Confirmed `./gradlew test` (available); Spotless was unavailable but now implemented.
 
-3. **Spring platform alignment**
-   - Upgrade Spring Boot plugin and BOM from `3.5.3` to latest `3.5.x`.
-   - Keep dependency-management plugin compatible with chosen Boot version.
-   - Remove milestone repository usage unless required by concrete dependency need.
+2. **Build/tooling baseline** — DONE
+   - Gradle wrapper updated to `8.14.3`.
+   - Java baseline migrated from `17` to `21` using `java.toolchain`.
+   - Milestone repository removed.
 
-4. **Test framework modernization**
-   - Migrate from legacy JUnit 4/Vintage usage to JUnit Jupiter where applicable.
-   - Remove `junit:junit` and `junit-vintage-engine` once migration is complete.
-   - Preserve test intent and assertions; only rewrite syntax/framework glue.
+3. **Spring platform alignment** — DONE
+   - Spring Boot upgraded from `3.5.3` to `3.5.9`.
+   - Dependency-management plugin remains compatible.
+
+4. **Test framework modernization** — DONE
+   - JUnit 4/Vintage → JUnit 5 (Jupiter) migration completed.
+   - All test assertions and intent preserved.
+   - Removed `junit:junit` and `org.junit.vintage:junit-vintage-engine`.
+
+### ✅ PARTIALLY COMPLETED
+
+6. **Code quality guardrail** — DONE
+   - Spotless configured and applied.
+   - `spotlessCheck` and `spotlessApply` now available and passing.
+
+### 🔲 REMAINING
 
 5. **Library and API compatibility sweep**
-   - Review explicit dependencies for compatibility with Java 21 and Boot-managed versions.
-   - Validate Apache HttpClient5 usage and Spring web client behavior.
-   - Resolve compiler warnings that may become hard failures in newer toolchains.
-
-6. **Code quality guardrail**
-   - Add and configure Spotless (`spotlessCheck`) with agreed style defaults.
-   - Ensure formatter runs in CI and locally (`spotlessApply`, `spotlessCheck`).
+   - Review explicit dependencies for Java 21 compatibility.
+   - Investigate deprecated API warnings in PersonWebServiceClientImpl.
+   - Validate Apache HttpClient5 usage (Spring Boot 3.5.9 includes newer versions).
 
 7. **Security and runtime hardening review**
    - Verify upgraded defaults and endpoint/client behavior.
-   - Confirm no regressions in auth, TLS, headers, serialization, and request handling patterns.
-   - Re-check for deprecated APIs and remove risky usage where feasible.
+   - Confirm no regressions in auth, TLS, headers, serialization patterns.
 
 8. **Repository validation**
-   - Validate this repo’s tests and startup behavior.
-   - Run project integration tests.
+   - Validate this repo's tests and startup behavior (already done: ✅ test pass).
+   - Run project integration tests (if available).
+   - Document any remaining compiler warnings.
 
 ## High-Risk Items Requiring Thorough Testing
 
