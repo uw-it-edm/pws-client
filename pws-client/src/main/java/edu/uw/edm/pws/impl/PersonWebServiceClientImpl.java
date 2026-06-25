@@ -29,7 +29,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
-@SuppressWarnings("deprecation")
 public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     private final RestTemplate restTemplate;

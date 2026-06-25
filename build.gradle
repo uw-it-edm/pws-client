@@ -8,7 +8,8 @@ plugins {
 
 allprojects {
     group = 'edu.uw.edm.pws'
-    version = '2.0.0'
+    // Version is injected by CI for releases; local builds default to snapshot.
+    version = providers.gradleProperty("releaseVersion").orElse("0.0.0-SNAPSHOT").get()
 
     repositories {
         mavenCentral()
