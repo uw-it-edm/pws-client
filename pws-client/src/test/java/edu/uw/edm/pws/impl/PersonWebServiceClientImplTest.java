@@ -142,7 +142,10 @@ public class PersonWebServiceClientImplTest {
                                                 + "}")
                                 .contentType(MediaType.APPLICATION_JSON));
 
-        assertThrows(BadPersonRequestException.class, () -> pws.getPersonByRegId("my-reg-id"));
+        BadPersonRequestException ex =
+                assertThrows(BadPersonRequestException.class, () -> pws.getPersonByRegId("my-reg-id"));
+        assertThat(ex.getPwsError().getStatusCode(), is(equalTo("400")));
+        assertThat(ex.getPwsError().getStatusDescription(), is(equalTo("Invalid studentNumber")));
     }
 
     @Test
