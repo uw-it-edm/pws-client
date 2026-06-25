@@ -89,7 +89,9 @@ public class PersonWebServiceClientImplTest {
                                                 + "    \"StatusDescription\": \"No person found.\"\n"
                                                 + "}")
                                 .contentType(MediaType.APPLICATION_JSON));
-        assertThrows(NoSuchPersonException.class, () -> pws.getPersonByRegId("my-reg-id"));
+        NoSuchPersonException ex =
+                assertThrows(NoSuchPersonException.class, () -> pws.getPersonByRegId("my-reg-id"));
+        assertThat(ex.getPwsError().getStatusCode(), is(equalTo("404")));
     }
 
     @Test
