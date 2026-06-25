@@ -129,7 +129,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         try {
             pwsError = objectMapper.readValue(responseBodyAsString, PWSError.class);
         } catch (IOException e1) {
-            log.error("Couldn't parse pwsError ", e);
+            log.error("Couldn't parse pwsError from response body: {}", responseBodyAsString, e1);
             throw new UnknownPersonRequestException(
                     e.getStatusCode().value() + " - " + responseBodyAsString, e);
         }
