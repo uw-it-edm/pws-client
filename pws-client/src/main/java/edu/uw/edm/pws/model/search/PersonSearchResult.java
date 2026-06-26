@@ -2,10 +2,8 @@ package edu.uw.edm.pws.model.search;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
-
 import edu.uw.edm.pws.model.Person;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -25,5 +23,4 @@ public class PersonSearchResult {
 
     @JsonProperty("TotalCount")
     private int totalCount;
-
 }

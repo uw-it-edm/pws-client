@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Date;
 import java.util.List;
-
 import lombok.Data;
 
 /**
@@ -15,11 +13,11 @@ import lombok.Data;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.ANY,
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE,
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-
 public class Person {
 
     @JsonProperty("DisplayName")
@@ -56,8 +54,7 @@ public class Person {
     protected String registeredSurname;
 
     @JsonProperty("RepositoryTimeStamp")
-    @JsonFormat
-            (shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
     protected Date repositoryTimeStamp;
 
     @JsonProperty("UIDNumber")

@@ -7,15 +7,15 @@ import lombok.Getter;
  * @author Maxime Deravet Date: 2019-02-14
  */
 public class PWSException extends Throwable {
-    @Getter
-    private final PWSError pwsError;
-
+    @Getter private final PWSError pwsError;
 
     public PWSException(PWSError pwsError) {
-        super(pwsError == null ? "Unknown exception" : pwsError.getStatusCode() + " - " + pwsError.getStatusDescription());
+        super(
+                pwsError == null
+                        ? "Unknown exception"
+                        : pwsError.getStatusCode() + " - " + pwsError.getStatusDescription());
         this.pwsError = pwsError;
     }
-
 
     public PWSException(PWSError pwsError, String message) {
         super(message);

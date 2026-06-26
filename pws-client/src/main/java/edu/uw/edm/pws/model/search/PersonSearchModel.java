@@ -35,9 +35,6 @@ public class PersonSearchModel {
     private String uWNetID;
     private String uWRegID;
 
-
-    @Builder.Default
-    private int pageStart = 1;
-    @Builder.Default
-    private int pageSize = 10;
+    @Builder.Default private int pageStart = 1;
+    @Builder.Default private int pageSize = 10;
 }
