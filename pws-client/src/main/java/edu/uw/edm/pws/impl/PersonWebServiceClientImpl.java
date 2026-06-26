@@ -101,9 +101,9 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     private void throwSearchPWSError(HttpStatusCodeException e) throws PWSException {
         PWSError pwsError = parsePWSError(e);
-        if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+        if (e.getStatusCode().isSameCodeAs(HttpStatus.BAD_REQUEST)) {
             throw new BadPersonRequestException(pwsError);
-        } else if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        } else if (e.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
             throw new PWSAuthenticationException(pwsError);
         } else {
             throw new PWSException(pwsError);
@@ -112,11 +112,11 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     private void throwGetPWSError(String regId, HttpStatusCodeException e) throws PWSException {
         PWSError pwsError = parsePWSError(e);
-        if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+        if (e.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
             throw new NoSuchPersonException(pwsError, regId);
-        } else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+        } else if (e.getStatusCode().isSameCodeAs(HttpStatus.BAD_REQUEST)) {
             throw new BadPersonRequestException(pwsError);
-        } else if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        } else if (e.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
             throw new PWSAuthenticationException(pwsError);
         } else {
             throw new PWSException(pwsError);
