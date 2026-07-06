@@ -1,0 +1,27 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "07:00"
+    timezone: America/Los_Angeles
+  open-pull-requests-limit: 10
+  target-branch: develop
+  ignore:
+  - dependency-name: gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties
+    versions:
+    - ">= 2.a, < 3"
+  - dependency-name: org.jfrog.buildinfo:build-info-extractor-gradle
+    versions:
+    - 4.19.0
+    - 4.20.0
+  - dependency-name: org.projectlombok:lombok
+    versions:
+    - 1.18.18
+  - dependency-name: org.springframework.boot:spring-boot-autoconfigure
+    versions:
+    - 2.4.2
+  - dependency-name: org.springframework.boot:spring-boot-gradle-plugin
+    versions:
+    - 2.4.2
