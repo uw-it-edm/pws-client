@@ -1,18 +1,12 @@
 jar {
-    baseName = project.name
+    archiveBaseName = project.name
 }
 
 compileJava.dependsOn(processResources)
 
 dependencies {
-
-    compile project(":pws-client")
-    compileOnly("org.projectlombok:lombok")
-    compileOnly("org.apache.httpcomponents:httpclient")
-    compileOnly("org.springframework.boot:spring-boot-autoconfigure:$springBootVersion")
-
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    optional "org.springframework.boot:spring-boot-configuration-processor"
-
+    implementation project(":pws-client")
+    compileOnly("org.apache.httpcomponents.client5:httpclient5")
+    compileOnly("org.springframework.boot:spring-boot-autoconfigure")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
-

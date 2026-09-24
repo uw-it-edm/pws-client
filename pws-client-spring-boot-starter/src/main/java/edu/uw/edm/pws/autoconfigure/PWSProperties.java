@@ -1,9 +1,8 @@
 package edu.uw.edm.pws.autoconfigure;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Maxime Deravet Date: 10/24/17
@@ -12,11 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PWSProperties {
-    /**
-     * Group webservices URL
-     */
+    /** Group webservices URL */
     private String url = "https://ws.admin.washington.edu/";
+
     private String keystoreLocation;
     private String keystorePassword;
-
 }

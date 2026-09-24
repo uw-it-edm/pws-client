@@ -1,24 +1,6 @@
-
 package edu.uw.edm.pws.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import edu.uw.edm.pws.PersonWebServiceClient;
 import edu.uw.edm.pws.exception.BadPersonRequestException;
 import edu.uw.edm.pws.exception.NoSuchPersonException;
@@ -29,12 +11,25 @@ import edu.uw.edm.pws.model.PWSError;
 import edu.uw.edm.pws.model.Person;
 import edu.uw.edm.pws.model.search.PersonSearchModel;
 import edu.uw.edm.pws.model.search.PersonSearchResult;
+import java.io.IOException;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 public class PersonWebServiceClientImpl implements PersonWebServiceClient {
-
 
     private final RestTemplate restTemplate;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -57,20 +52,22 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         log.debug("Person Web Service headers: {}", this.headers.toString());
     }
 
-
     public PersonSearchResult searchPerson(PersonSearchModel personSearchModel) throws PWSException {
 
-        HttpEntity request = new HttpEntity(headers);
-
+        HttpEntity<?> request = new HttpEntity<>(headers);
 
         final MultiValueMap<String, String> searchParams = searchModelToQueryParams(personSearchModel);
 
-        final UriComponents uri = UriComponentsBuilder.fromHttpUrl(pwsURL + PWS_SEARCH_PERSON_V2_URI)
-                .queryParams(searchParams).build();
+        final UriComponents uri =
+                UriComponentsBuilder.fromHttpUrl(pwsURL + PWS_SEARCH_PERSON_V2_URI)
+                        .queryParams(searchParams)
+                        .build();
 
         final ResponseEntity<PersonSearchResult> pwsResponse;
         try {
-            pwsResponse = restTemplate.exchange(uri.toUriString(), HttpMethod.GET, request, PersonSearchResult.class, searchParams);
+            pwsResponse =
+                    restTemplate.exchange(
+                            uri.toUriString(), HttpMethod.GET, request, PersonSearchResult.class, searchParams);
             return pwsResponse.getBody();
 
         } catch (HttpStatusCodeException e) {
@@ -81,14 +78,13 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         }
     }
 
-
     public Person getPersonByRegId(String regId) throws PWSException {
         return getPersonById(regId);
     }
 
     private Person getPersonById(String regId) throws PWSException {
 
-        HttpEntity request = new HttpEntity(headers);
+        HttpEntity<?> request = new HttpEntity<>(headers);
         final String url = getGetUrl(regId);
         final ResponseEntity<Person> pwsResponse;
         try {
@@ -101,36 +97,31 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         } catch (Exception e) {
             throw new PWSException(e);
         }
-
     }
 
     private void throwSearchPWSError(HttpStatusCodeException e) throws PWSException {
         PWSError pwsError = parsePWSError(e);
-        switch (e.getStatusCode()) {
-            case BAD_REQUEST:
-                throw new BadPersonRequestException(pwsError);
-            case UNAUTHORIZED:
-                throw new PWSAuthenticationException(pwsError);
-            default:
-                throw new PWSException(pwsError);
+        if (e.getStatusCode().isSameCodeAs(HttpStatus.BAD_REQUEST)) {
+            throw new BadPersonRequestException(pwsError);
+        } else if (e.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
+            throw new PWSAuthenticationException(pwsError);
+        } else {
+            throw new PWSException(pwsError);
         }
     }
-
 
     private void throwGetPWSError(String regId, HttpStatusCodeException e) throws PWSException {
         PWSError pwsError = parsePWSError(e);
-        switch (e.getStatusCode()) {
-            case NOT_FOUND:
-                throw new NoSuchPersonException(pwsError, regId);
-            case BAD_REQUEST:
-                throw new BadPersonRequestException(pwsError);
-            case UNAUTHORIZED:
-                throw new PWSAuthenticationException(pwsError);
-            default:
-                throw new PWSException(pwsError);
+        if (e.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+            throw new NoSuchPersonException(pwsError, regId);
+        } else if (e.getStatusCode().isSameCodeAs(HttpStatus.BAD_REQUEST)) {
+            throw new BadPersonRequestException(pwsError);
+        } else if (e.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED)) {
+            throw new PWSAuthenticationException(pwsError);
+        } else {
+            throw new PWSException(pwsError);
         }
     }
-
 
     private PWSError parsePWSError(HttpStatusCodeException e) throws UnknownPersonRequestException {
         final String responseBodyAsString = e.getResponseBodyAsString();
@@ -138,8 +129,9 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         try {
             pwsError = objectMapper.readValue(responseBodyAsString, PWSError.class);
         } catch (IOException e1) {
-            log.error("Couldn't parse pwsError ", e);
-            throw new UnknownPersonRequestException(e.getRawStatusCode() + " - " + responseBodyAsString, e);
+            log.error("Couldn't parse pwsError from response body: {}", responseBodyAsString, e1);
+            throw new UnknownPersonRequestException(
+                    e.getStatusCode().value() + " - " + responseBodyAsString, e);
         }
         return pwsError;
     }
@@ -148,29 +140,30 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         return String.format(pwsURL + PWS_GET_PERSON_FULL_V2_URI, id);
     }
 
-    private MultiValueMap<String, String> searchModelToQueryParams(PersonSearchModel personSearchModel) {
+    private MultiValueMap<String, String> searchModelToQueryParams(
+            PersonSearchModel personSearchModel) {
         final MultiValueMap<String, String> searchParams = new LinkedMultiValueMap<>();
 
-        //Always get the full person
+        // Always get the full person
         searchParams.add("verbose", "true");
 
         searchParams.add("page_size", String.valueOf(personSearchModel.getPageSize()));
 
         searchParams.add("page_start", String.valueOf(personSearchModel.getPageStart()));
 
-        if (!StringUtils.isEmpty(personSearchModel.getAddress())) {
+        if (StringUtils.hasLength(personSearchModel.getAddress())) {
             searchParams.add("address", personSearchModel.getAddress());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getChangedSinceDate())) {
+        if (StringUtils.hasLength(personSearchModel.getChangedSinceDate())) {
             searchParams.add("changed_since_date", personSearchModel.getChangedSinceDate());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getDepartment())) {
+        if (StringUtils.hasLength(personSearchModel.getDepartment())) {
             searchParams.add("department", personSearchModel.getDepartment());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getDevelopmentID())) {
+        if (StringUtils.hasLength(personSearchModel.getDevelopmentID())) {
             searchParams.add("development_id", personSearchModel.getDevelopmentID());
         }
 
@@ -187,7 +180,9 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         }
 
         if (personSearchModel.getEmployeeAffiliationStateFilter() != null) {
-            searchParams.add("employeeAffiliationState", personSearchModel.getEmployeeAffiliationStateFilter().getEmployeeAffiliationStateValue());
+            searchParams.add(
+                    "employeeAffiliationState",
+                    personSearchModel.getEmployeeAffiliationStateFilter().getEmployeeAffiliationStateValue());
         }
 
         if (personSearchModel.isEduPersonAffiliationFaculty()) {
@@ -206,56 +201,54 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
             searchParams.add("edupersonaffiliation_student", "true");
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getEmail())) {
+        if (StringUtils.hasLength(personSearchModel.getEmail())) {
             searchParams.add("email", personSearchModel.getEmail());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getEmployeeID())) {
+        if (StringUtils.hasLength(personSearchModel.getEmployeeID())) {
             searchParams.add("employee_id", personSearchModel.getEmployeeID());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getFirstName())) {
+        if (StringUtils.hasLength(personSearchModel.getFirstName())) {
             searchParams.add("first_name", personSearchModel.getFirstName());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getHomeDepartment())) {
+        if (StringUtils.hasLength(personSearchModel.getHomeDepartment())) {
             searchParams.add("home_dept", personSearchModel.getHomeDepartment());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getLastName())) {
+        if (StringUtils.hasLength(personSearchModel.getLastName())) {
             searchParams.add("last_name", personSearchModel.getLastName());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getMailStop())) {
+        if (StringUtils.hasLength(personSearchModel.getMailStop())) {
             searchParams.add("mail_stop", personSearchModel.getMailStop());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getPhoneNumber())) {
+        if (StringUtils.hasLength(personSearchModel.getPhoneNumber())) {
             searchParams.add("phone_number", personSearchModel.getPhoneNumber());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getStudentNumber())) {
+        if (StringUtils.hasLength(personSearchModel.getStudentNumber())) {
             searchParams.add("student_number", personSearchModel.getStudentNumber());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getStudentSystemKey())) {
+        if (StringUtils.hasLength(personSearchModel.getStudentSystemKey())) {
             searchParams.add("student_system_key", personSearchModel.getStudentSystemKey());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getTitle())) {
+        if (StringUtils.hasLength(personSearchModel.getTitle())) {
             searchParams.add("title", personSearchModel.getTitle());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getUWNetID())) {
+        if (StringUtils.hasLength(personSearchModel.getUWNetID())) {
             searchParams.add("uwnetid", personSearchModel.getUWNetID());
         }
 
-        if (!StringUtils.isEmpty(personSearchModel.getUWRegID())) {
+        if (StringUtils.hasLength(personSearchModel.getUWRegID())) {
             searchParams.add("uwregid", personSearchModel.getUWRegID());
         }
 
-
         return searchParams;
     }
-
 }

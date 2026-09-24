@@ -7,6 +7,5 @@ public class UnknownPersonRequestException extends PWSException {
 
     public UnknownPersonRequestException(String message, Exception e) {
         super(message, e);
-
     }
 }

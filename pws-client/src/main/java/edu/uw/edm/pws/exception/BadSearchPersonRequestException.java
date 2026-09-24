@@ -9,6 +9,5 @@ public class BadSearchPersonRequestException extends PWSException {
 
     public BadSearchPersonRequestException(PWSError pwsError) {
         super(pwsError);
-
     }
 }

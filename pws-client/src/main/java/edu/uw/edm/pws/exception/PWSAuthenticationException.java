@@ -9,6 +9,5 @@ public class PWSAuthenticationException extends PWSException {
 
     public PWSAuthenticationException(PWSError pwsError) {
         super(pwsError);
-
     }
 }

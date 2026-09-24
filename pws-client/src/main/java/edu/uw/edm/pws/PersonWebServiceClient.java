@@ -10,9 +10,7 @@ import edu.uw.edm.pws.model.search.PersonSearchResult;
  */
 public interface PersonWebServiceClient {
 
-
     Person getPersonByRegId(String regId) throws PWSException;
 
     PersonSearchResult searchPerson(PersonSearchModel personSearchModel) throws PWSException;
-
 }
