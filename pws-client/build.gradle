@@ -4,10 +4,10 @@ jar {
 
 dependencies {
     compileOnly("org.springframework:spring-web")
+    compileOnly("tools.jackson.core:jackson-databind")
 
-    testImplementation("com.fasterxml.jackson.core:jackson-core")
-    testImplementation("com.fasterxml.jackson.core:jackson-databind")
-    testImplementation("com.fasterxml.jackson.core:jackson-annotations")
+    testImplementation("tools.jackson.core:jackson-databind")
     testImplementation("org.springframework:spring-web")
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

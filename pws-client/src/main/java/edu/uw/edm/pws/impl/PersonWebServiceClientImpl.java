@@ -1,6 +1,5 @@
 package edu.uw.edm.pws.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.uw.edm.pws.PersonWebServiceClient;
 import edu.uw.edm.pws.exception.BadPersonRequestException;
 import edu.uw.edm.pws.exception.NoSuchPersonException;
@@ -11,7 +10,6 @@ import edu.uw.edm.pws.model.PWSError;
 import edu.uw.edm.pws.model.Person;
 import edu.uw.edm.pws.model.search.PersonSearchModel;
 import edu.uw.edm.pws.model.search.PersonSearchResult;
-import java.io.IOException;
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -27,12 +25,15 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Slf4j
 public class PersonWebServiceClientImpl implements PersonWebServiceClient {
 
     private final RestTemplate restTemplate;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     private HttpHeaders headers;
 
@@ -59,7 +60,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         final MultiValueMap<String, String> searchParams = searchModelToQueryParams(personSearchModel);
 
         final UriComponents uri =
-                UriComponentsBuilder.fromHttpUrl(pwsURL + PWS_SEARCH_PERSON_V2_URI)
+                UriComponentsBuilder.fromUriString(pwsURL + PWS_SEARCH_PERSON_V2_URI)
                         .queryParams(searchParams)
                         .build();
 
@@ -128,7 +129,7 @@ public class PersonWebServiceClientImpl implements PersonWebServiceClient {
         PWSError pwsError;
         try {
             pwsError = objectMapper.readValue(responseBodyAsString, PWSError.class);
-        } catch (IOException e1) {
+        } catch (JacksonException e1) {
             log.error("Couldn't parse pwsError from response body: {}", responseBodyAsString, e1);
             throw new UnknownPersonRequestException(
                     e.getStatusCode().value() + " - " + responseBodyAsString, e);
