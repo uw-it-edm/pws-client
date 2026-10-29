@@ -8,5 +8,11 @@ dependencies {
     implementation project(":pws-client")
     compileOnly("org.apache.httpcomponents.client5:httpclient5")
     compileOnly("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-restclient")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    testImplementation("org.apache.httpcomponents.client5:httpclient5")
+    testImplementation("org.springframework:spring-web")
+    testImplementation("tools.jackson.core:jackson-databind")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.9' apply false
+    id 'org.springframework.boot' version '4.1.2' apply false
     id 'io.spring.dependency-management' version '1.1.7' apply false
     id 'com.diffplug.spotless' version '7.2.1' apply false
     id 'maven-publish'
@@ -29,7 +29,7 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.9"
+            mavenBom "org.springframework.boot:spring-boot-dependencies:4.1.2"
         }
     }
 
@@ -41,6 +41,10 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testCompileOnly("org.projectlombok:lombok")
         testAnnotationProcessor("org.projectlombok:lombok")
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
     }
 
     spotless {
